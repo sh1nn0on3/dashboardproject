@@ -4,10 +4,14 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Editor } from "@tinymce/tinymce-react";
 
 import { getInventory, getOrders } from "../../API";
+import Tiny from "../../Hooks/Tiny";
 
 function Orders() {
   const [form] = Form.useForm();
-  const [editorContent, setEditorContent] = useState("");
+  const [risk, setRisk] = useState("");
+  const [red, setRed] = useState("");
+  const [blue, setBlue] = useState("");
+  const [protect, setprotect] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (values) => {
@@ -15,21 +19,20 @@ function Orders() {
     // Gửi yêu cầu thêm bài học
     const dataToSend = {
       ...values,
-      description: editorContent,
+      risk: risk,
+      red: red,
+      blue: blue,
+      protect: protect,
     };
     console.log(dataToSend);
     setLoading(false);
     form.resetFields();
   };
 
-  const handleEditorChange = (content) => {
-    setEditorContent(content);
-  };
-
   return (
     <Form layout="vertical" onFinish={handleSubmit}>
       <Form.Item
-        name="courseName"
+        name="name"
         label="Tên khóa học"
         rules={[{ required: true, message: "Vui lòng nhập tên khóa học" }]}
       >
@@ -49,111 +52,52 @@ function Orders() {
       </Form.Item>
 
       <Form.Item
-        name="description"
+        name="detail"
         label="Mô tả"
         rules={[{ required: true, message: "Vui lòng nhập mô tả" }]}
       >
         <Input.TextArea rows={3} />
       </Form.Item>
 
-      <Form.Item
+      <Tiny
+        name="rick"
+        label="Mô tả Rủi ro (Rick)"
+        message="Mô tả Rủi ro (Rick)"
+        value={risk}
+        setValue={setRisk}
+      />
+
+      <Tiny
         name="red"
         label="Mô tả Tấn công (Red)"
-        rules={[{ required: true, message: "Mô tả Tấn công (Red)" }]}
-      >
-        <Editor
-          // initialValue="<p>This is the initial content of the editor</p>"
-          init={{
-            height: 300,
-            menubar: "favs file edit view insert format tools table help",
-            plugins: [
-              "advlist autolink link image lists charmap print preview hr anchor pagebreak",
-              "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-              "table emoticons template paste help",
-            ],
-            toolbar:
-              "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | " +
-              "bullist numlist outdent indent | link image | print preview media fullscreen | " +
-              "forecolor backcolor emoticons | help",
-            menu: {
-              favs: {
-                title: "My Favorites",
-                items: "code visualaid | searchreplace | emoticons",
-              },
-            },
-            // content_css: "css/content.css",
-          }}
-          value={editorContent}
-          onEditorChange={handleEditorChange}
-        />
-      </Form.Item>
+        message="Mô tả Tấn công (Red)"
+        value={red}
+        setValue={setRed}
+      />
 
-      <Form.Item
+      <Tiny
         name="blue"
         label="Mô tả Phòng thủ (blue)"
-        rules={[{ required: true, message: "Mô tả Phòng thủ (blue)" }]}
-      >
-        <Editor
-          // initialValue="<p>This is the initial content of the editor</p>"
-          init={{
-            height: 300,
-            menubar: "favs file edit view insert format tools table help",
-            plugins: [
-              "advlist autolink link image lists charmap print preview hr anchor pagebreak",
-              "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-              "table emoticons template paste help",
-            ],
-            toolbar:
-              "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | " +
-              "bullist numlist outdent indent | link image | print preview media fullscreen | " +
-              "forecolor backcolor emoticons | help",
-            menu: {
-              favs: {
-                title: "My Favorites",
-                items: "code visualaid | searchreplace | emoticons",
-              },
-            },
-            // content_css: "css/content.css",
-          }}
-          value={editorContent}
-          onEditorChange={handleEditorChange}
-        />
-      </Form.Item>
+        message="Mô tả Phòng thủ (blue)"
+        value={blue}
+        setValue={setBlue}
+      />
 
-      <Form.Item
+      <Tiny
         name="protect"
         label="Mô tả cách phòng chống (Protect)"
-        rules={[{ required: true, message: "Mô tả cách phòng chống (Protect)" }]}
-      >
-        <Editor
-          // initialValue="<p>This is the initial content of the editor</p>"
-          init={{
-            height: 300,
-            menubar: "favs file edit view insert format tools table help",
-            plugins: [
-              "advlist autolink link image lists charmap print preview hr anchor pagebreak",
-              "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-              "table emoticons template paste help",
-            ],
-            toolbar:
-              "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | " +
-              "bullist numlist outdent indent | link image | print preview media fullscreen | " +
-              "forecolor backcolor emoticons | help",
-            menu: {
-              favs: {
-                title: "My Favorites",
-                items: "code visualaid | searchreplace | emoticons",
-              },
-            },
-            // content_css: "css/content.css",
-          }}
-          value={editorContent}
-          onEditorChange={handleEditorChange}
-        />
-      </Form.Item>
+        message="Mô tả cách phòng chống (Protect)"
+        value={protect}
+        setValue={setprotect}
+      />
 
       <Form.Item className="mt-10">
-        <Button type="primary" htmlType="submit" loading={loading} className="text-gray-500">
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={loading}
+          className="text-gray-500"
+        >
           Thêm bài học
         </Button>
         <Button onClick={form.resetFields}>Hủy</Button>
