@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 import { getInventory, getOrders } from "../../API";
 import Tiny from "../../Hooks/Tiny";
+import axios from "axios";
 
 const { confirm } = Modal;
 
@@ -23,13 +24,13 @@ function Orders() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState([]);
-  console.log("🚀 ~ file: index.js:26 ~ Orders ~ image:", image)
-  const [risk, setRisk] = useState("");
+  const [risk, setRisk] = useState({});
   const [attack, setAttack] = useState("");
   const [detect, setDetect] = useState("");
   const [recommendation, setRecommendation] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  // console.log("🚀 ~ file: index.js:33 ~ Orders ~ showSuccess:", showSuccess)
 
   const showConfirm = () => {
     confirm({
@@ -42,7 +43,7 @@ function Orders() {
     });
   };
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     setLoading(true);
     // Gửi yêu cầu thêm bài học
 
@@ -50,20 +51,43 @@ function Orders() {
     // setLoading(false);
     // form.resetFields();
     const dataToSend = {
-      name: name,
+      lessonName: name,
       image: image,
+      course_id: 1,
       description: description,
       risk: risk,
       attack: attack,
       detect: detect,
       recommendation: recommendation,
     };
-    console.log(dataToSend);
+    // console.log(dataToSend);
     setLoading(false);
-    form.resetFields();
-    setShowSuccess(true);
-    message.success("Thêm bài học thành công");
-    navigate("/inventory");
+
+    try {
+      // call Api
+      const res = await axios.post(
+        "http://103.28.174.29:4180/api/create-lesson",
+        dataToSend
+      );
+      if (res.data.errorCode === 0) {
+        // form.resetFields();
+        setShowSuccess(true);
+        message.success("thêm bài học thành công ");
+        navigate("/inventory");
+      } else if (res.data.errorCode === 1) {
+        setShowSuccess(false);
+        message.error("Đã tồn tại bài này ");
+      } else {
+        setShowSuccess(false);
+        message.error("thêm bài học thất bại");
+      }
+    } catch (err) {
+      console.log(err);
+      setShowSuccess(false);
+      message.error("Đã nhập thiếu thông tin , Vui lòng nhập đủ thông tin");
+    }
+    // message.success("Thêm bài học thành công");
+    // navigate("/inventory");
   };
 
   return (
@@ -143,14 +167,26 @@ function Orders() {
           >
             Thêm bài học
           </Button>
-          <Button onClick={form.resetFields}>Hủy</Button>
+          <Button
+            onClick={() => {
+              setName("");
+              setAttack("");
+              setDescription("");
+              setDetect("");
+              setRisk("");
+              setRecommendation("");
+              setImage({});
+            }}
+          >
+            Hủy
+          </Button>
         </Form.Item>
       </Form>
-      {showSuccess && (
+      {/* {showSuccess && (
         <div style={{ margin: "20px 0" }}>
           <Alert message="Thêm bài học thành công" type="success" />
         </div>
-      )}
+      )} */}
     </>
   );
 }
